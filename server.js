@@ -127,3 +127,11 @@ app.post("/set-available", requireSecret, async (req, res) => {
 
 // Health check público
 app.get("/health", (_req, res) => res.json({ ok: true }));
+
+const PORT = process.env.PORT || 3001;
+app.listen(PORT, () => {
+  console.log(`✅ Servidor rodando em http://localhost:${PORT}`);
+  console.log(`   Domínio Freshchat : ${DOMAIN}.freshchat.com`);
+  console.log(`   Frontend permitido: ${FRONTEND_URL}`);
+  console.log(`   APP_SECRET        : ${APP_SECRET === "troque-essa-senha-antes-de-subir" ? "⚠️  PADRÃO — troque antes de subir!" : "✓ configurado"}`);
+});

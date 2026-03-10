@@ -152,3 +152,8 @@ app.post("/set-available", requireSecret, async (req, res) => {
 
 // Health check público
 app.get("/health", (_req, res) => res.json({ ok: true }));
+
+const PORT = process.env.PORT || 3001;
+app.listen(PORT, () => {
+  console.log(`✅ Servidor rodando em http://localhost:${PORT}`);
+});

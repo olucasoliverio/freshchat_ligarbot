@@ -35,7 +35,6 @@ const AGENTS = [
   // ── Furia ─────────────────────────────────────────────────────────────────────
   { team:"Furia"      ,name:"Alessandro Tramontin Frigo"  ,id:"6a053407-0a0e-4e3f-a627-d5afb5dcc124", email:"alessandro.frigo@nextfit.com.br" },
   { team:"Furia"      ,name:"Augusto Zanette Vitali"      ,id:"57820fce-cb8c-48f3-973c-796ba072ef3c", email:"augusto.zanette@nextfit.com.br" },
-  { team:"Furia"      ,name:"Bruno Koscrevic"             ,id:"1e794893-68f0-417c-8639-0cc2609a3b13", email:"bruno.koscrevic@nextfit.com.br" },
   { team:"Furia"      ,name:"Camily Zanette Albano"       ,id:"519b1cc1-4980-4820-b707-83860085a35e", email:"camily.zanette@nextfit.com.br" },
   { team:"Furia"      ,name:"Cecília Rufino"              ,id:"f70372b8-3c2b-440e-a1e0-dbcd3b3665f0", email:"cecilia.rufino@nextfit.com.br" },
   { team:"Furia"      ,name:"Gustavo Belegante"           ,id:"96e8c7ca-f528-40d2-9a69-18386a99a9f6", email:"gustavo.belegante@nextfit.com.br" },

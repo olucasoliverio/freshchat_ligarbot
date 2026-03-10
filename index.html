@@ -59,8 +59,8 @@
       border: 1px solid var(--border);
       border-radius: var(--radius);
       padding: 32px;
+      width: 100%;
       max-width: 420px;
-      margin: 60px auto 0;
       box-shadow: 0 1px 4px rgba(0,0,0,.06);
     }
     .login-card h2 { font-size: 17px; font-weight: 700; margin-bottom: 6px; }
@@ -218,15 +218,15 @@
   <div class="header">
     <div class="header-icon">💬</div>
     <div>
-      <h1>Freshchat Disponibilidade dos Agentes</h1>
-      <p>Defina agentes como <strong>DISPONÍVEIS</strong> em lote</p>
+      <h1>Freshchat Availability</h1>
+      <p>Defina agentes como <strong>AVAILABLE</strong> via API</p>
     </div>
   </div>
 
   <!-- Tela de login -->
-  <div id="login-screen">
+  <div id="login-screen" style="display:flex;align-items:center;justify-content:center;min-height:70vh;">
     <div class="login-card">
-      <h2>Acesso restrito</h2>
+      <h2>🔐 Acesso restrito</h2>
       <p>Insira a senha para acessar o painel.</p>
       <input type="password" id="secret-input" placeholder="Senha de acesso" />
       <button class="login-btn" onclick="doLogin()">Entrar</button>
@@ -247,13 +247,15 @@
 <div class="bottom-bar" id="bottom-bar" style="display:none">
   <div class="bar-info">
     <h3 id="bar-count">0 agentes selecionados</h3>
+    <p>PATCH → availability_status: AVAILABLE</p>
   </div>
   <button class="run-btn" id="run-btn" disabled onclick="runAll()">▶ Executar</button>
 </div>
 
 <script>
   // ── Config ──────────────────────────────────────────────────────────────────
-  const BACKEND = "https://freshchat-ligarbot.onrender.com"; 
+  // Troque pela URL do seu backend ao hospedar
+  const BACKEND = "https://freshchat-ligarbot.onrender.com";
 
   // ── Estado ──────────────────────────────────────────────────────────────────
   let AGENTS = [];

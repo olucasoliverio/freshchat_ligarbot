@@ -27,6 +27,7 @@ const AGENTS = [
   { team:"Ghosters"   ,name:"João Vitor Campos Policarpi" ,id:"24fadb48-536c-461d-b4d3-07061fbdd000", email:"joaovitor.policarpi@nextfit.com.br" },
   { team:"Ghosters"   ,name:"José Giassi"                 ,id:"ea53e545-c7d1-41e5-9ff0-aee9cf4b1abd", email:"joseluiz.giassi@nextfit.com.br" },
   { team:"Ghosters"   ,name:"Julia Graziela"              ,id:"e6a020b8-1496-4330-ba91-0b9d1657bc1f", email:"julia.graziela@nextfit.com.br" },
+  { team:"Ghosters"   ,name:"Kauã Lucas"                  ,id:"ea48f912-ad7b-4721-b893-007971b441e6", email:"kaua.alves@nextfit.com.br" },
   { team:"Ghosters"   ,name:"Larissa Inacio"              ,id:"0681d394-26b8-432e-a7ea-d31fb5c7f943", email:"larissa.inacio@nextfit.com.br" },
   { team:"Ghosters"   ,name:"Mariani Oliveira Fernandes"  ,id:"a5118cef-0248-4c7e-af3e-614e5ae431cf", email:"mariani.oliveira@nextfit.com.br" },
   { team:"Ghosters"   ,name:"Vicenzo Souza Dias"          ,id:"307707f3-2cfa-44b1-b90f-a9916b5b80d1", email:"vicenzo.dias@nextfit.com.br" },

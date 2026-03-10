@@ -118,14 +118,17 @@ app.post("/set-available", requireSecret, async (req, res) => {
       };
 
       try {
-        // 1. Checa status atual do agente
+        // 1. Checa status atual do agente — se falhar, NÃO prossegue
         const getRes = await fetch(baseUrl, { headers });
-        if (getRes.ok) {
-          const agentData = await getRes.json();
-          const currentStatusId = agentData?.agent_status?.id;
-          if (currentStatusId === COFFEE_STATUS_ID) {
-            return { agent_id: id, status: "coffee" };
-          }
+        if (!getRes.ok) {
+          return { agent_id: id, status: "error", message: `GET falhou: ${getRes.status}`, http_status: getRes.status };
+        }
+
+        const agentData = await getRes.json();
+        const currentStatusId = agentData?.agent_status?.id;
+
+        if (currentStatusId === COFFEE_STATUS_ID) {
+          return { agent_id: id, status: "coffee" };
         }
 
         // 2. Não está no café — seta como disponível

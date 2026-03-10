@@ -417,6 +417,9 @@
       });
 
       const data = await res.json();
+      if (!res.ok || !Array.isArray(data.results)) {
+        throw new Error(data.error || `Erro HTTP ${res.status}`);
+      }
       const resultMap = {};
       data.results.forEach(r => { resultMap[r.agent_id] = r; });
 

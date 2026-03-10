@@ -5,7 +5,7 @@ const app = express();
 app.use(express.json());
 
 // ─── Config ─────────────────────────────────────────────────────────────────
-const DOMAIN       = process.env.FRESHCHAT_DOMAIN 
+const DOMAIN       = process.env.FRESHCHAT_DOMAIN
 const API_KEY      = process.env.FRESHCHAT_API_KEY
 const APP_SECRET   = process.env.APP_SECRET
 const FRONTEND_URL = process.env.FRONTEND_URL
@@ -110,7 +110,7 @@ app.post("/set-available", requireSecret, async (req, res) => {
           },
           body: JSON.stringify({ availability_status: "AVAILABLE" }),
         });
-        return { agent_id: id, status: response.ok ? "ok" : "error", http_status: response.status };
+        return { agent_id: id, status: response.ok ? "ok" : response.status === 409 ? "offline" : "error", http_status: response.status };
       } catch (err) {
         return { agent_id: id, status: "network_error", message: err.message };
       }

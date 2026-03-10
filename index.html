@@ -168,8 +168,9 @@
     .agent-email { font-size: 12px; color: #94a3b8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
     .result-cell { min-width: 60px; text-align: right; font-size: 13px; font-weight: 600; }
-    .result-ok    { color: #16a34a; }
-    .result-error { color: #dc2626; }
+    .result-ok      { color: #16a34a; }
+    .result-error   { color: #dc2626; }
+    .result-offline { color: #f59e0b; font-size: 11px; }
 
     /* ── Bottom bar ── */
     .bottom-bar {
@@ -204,6 +205,7 @@
     .log-time    { color: #475569; }
     .log-ok      { color: #4ade80; font-weight: 700; }
     .log-err     { color: #f87171; font-weight: 700; }
+    .log-offline { color: #fbbf24; font-weight: 700; }
     .log-name    { color: #e2e8f0; }
     .log-status  { color: #64748b; }
     .log-divider { border-top: 1px solid #1e293b; margin-top: 12px; padding-top: 10px; color: #475569; font-size: 12px; }
@@ -216,10 +218,10 @@
 
 <div class="wrapper">
   <div class="header">
-    <div class="header-icon">💬</div>
+    <div class="header-icon"></div>
     <div>
-      <h1>Freshchat Availability</h1>
-      <p>Defina agentes como <strong>AVAILABLE</strong> via API</p>
+      <h1>Freshchat Disponibilidade de Agentes</h1>
+      <p>Defina agentes como <strong>DISPONÍVEL</strong> em lote</p>
     </div>
   </div>
 
@@ -238,7 +240,7 @@
   <div id="main-panel" style="display:none">
     <div id="teams-container"><div class="loading">Carregando agentes…</div></div>
     <div class="log-panel" id="log-panel">
-      <div class="log-title">LOG DE EXECUÇÃO</div>
+      <div class="log-title">LOG DE EXECUCAO</div>
       <div id="log-lines"></div>
     </div>
   </div>
@@ -247,9 +249,9 @@
 <div class="bottom-bar" id="bottom-bar" style="display:none">
   <div class="bar-info">
     <h3 id="bar-count">0 agentes selecionados</h3>
-    <p>PATCH → availability_status: AVAILABLE</p>
+    <p>PATCH → availability_status: DISPONÍVEL</p>
   </div>
-  <button class="run-btn" id="run-btn" disabled onclick="runAll()">▶ Executar</button>
+  <button class="run-btn" id="run-btn" disabled onclick="runAll()">Executar</button>
 </div>
 
 <script>
@@ -371,7 +373,7 @@
       `${count} agente${count !== 1 ? "s" : ""} selecionado${count !== 1 ? "s" : ""}`;
     const btn = document.getElementById("run-btn");
     btn.disabled = count === 0;
-    btn.textContent = `▶ Executar (${count})`;
+    btn.textContent = `Executar (${count})`;
   }
 
   function toggleAgent(id, team) {
@@ -392,7 +394,7 @@
 
     const btn = document.getElementById("run-btn");
     btn.disabled = true;
-    btn.textContent = "⏳ Executando...";
+    btn.textContent = "Executando...";
 
     const logPanel = document.getElementById("log-panel");
     const logLines = document.getElementById("log-lines");
@@ -416,9 +418,13 @@
 
         const cell = document.getElementById(`res-${agent.id}`);
         if (cell) {
-          cell.innerHTML = ok
-            ? `<span class="result-ok">✓</span>`
-            : `<span class="result-error">✗ ${r.http_status || r.status}</span>`;
+          if (ok) {
+            cell.innerHTML = `<span class="result-ok">OK</span>`;
+          } else if (r.status === "offline") {
+            cell.innerHTML = `<span class="result-offline">offline</span>`;
+          } else {
+            cell.innerHTML = `<span class="result-error">erro ${r.http_status || r.status}</span>`;
+          }
         }
 
         const ts = new Date().toLocaleTimeString("pt-BR");
@@ -426,9 +432,9 @@
         line.className = "log-line";
         line.innerHTML = `
           <span class="log-time">[${ts}]</span>
-          <span class="${ok ? "log-ok" : "log-err"}">${ok ? "✓" : "✗"}</span>
+          <span class="${ok ? "log-ok" : r.status === "offline" ? "log-offline" : "log-err"}">${ok ? "OK" : r.status === "offline" ? "OFF" : "ERRO"}</span>
           <span class="log-name">${agent.name}</span>
-          <span class="log-status">→ ${ok ? "AVAILABLE" : (r.http_status || r.status)}</span>
+          <span class="log-status">— ${ok ? "DISPONÍVEL" : r.status === "offline" ? "agente offline" : (r.http_status || r.status)}</span>
         `;
         logLines.appendChild(line);
       });
@@ -443,11 +449,11 @@
     } catch (e) {
       const line = document.createElement("div");
       line.className = "log-line";
-      line.innerHTML = `<span class="log-err">✗ Erro ao conectar no backend: ${e.message}</span>`;
+      line.innerHTML = `<span class="log-err">ERRO ao conectar no backend: ${e.message}</span>`;
       logLines.appendChild(line);
     }
 
-    btn.textContent = "▶ Executar";
+    btn.textContent = "Executar";
     refreshBar();
   }
 </script>

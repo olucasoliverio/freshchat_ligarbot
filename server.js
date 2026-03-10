@@ -6,10 +6,10 @@ const app = express();
 app.use(express.json());
 
 // ─── Config ─────────────────────────────────────────────────────────────────
-const DOMAIN       = process.env.FRESHCHAT_DOMAIN 
-const API_KEY      = process.env.FRESHCHAT_API_KEY
-const APP_SECRET   = process.env.APP_SECRET
-const FRONTEND_URL = process.env.FRONTEND_URL
+const DOMAIN       = process.env.FRESHCHAT_DOMAIN;
+const API_KEY      = process.env.FRESHCHAT_API_KEY;
+const APP_SECRET   = process.env.APP_SECRET;
+const FRONTEND_URL = process.env.FRONTEND_URL;
 // ─────────────────────────────────────────────────────────────────────────────
 
 // CORS — só aceita requisições do frontend autorizado
@@ -18,9 +18,12 @@ app.use(cors({
   methods: ["GET", "POST"],
 }));
 
-// ─── Agentes ──────────────────────────────
+// ─── Status especiais ────────────────────────────────────────────────────────
+const COFFEE_STATUS_ID = "4d37887b-e220-4533-9e69-a024dd81cfdb";
+
+// ─── Agentes ─────────────────────────────────────────────────────────────────
 const AGENTS = [
-  // ── Ghosters ──────────────────────────────────────────────────────────────────
+  // ── Ghosters ────────────────────────────────────────────────────────────────
   { team:"Ghosters"   ,name:"Caetano Córdova da Silva"    ,id:"f37470fa-3467-43a2-8ee1-461bfe86eb38", email:"caetano.cordova@nextfit.com.br" },
   { team:"Ghosters"   ,name:"Camilli Salvaro"             ,id:"c1848870-d518-48a1-ba42-aff26f23c3ba", email:"camilli.salvaro@nextfit.com.br" },
   { team:"Ghosters"   ,name:"Ezequiel Marcon"             ,id:"14f5eeb8-b8a9-4448-8878-43cd4dc34ead", email:"ezequiel.marcon@nextfit.com.br" },
@@ -33,7 +36,7 @@ const AGENTS = [
   { team:"Ghosters"   ,name:"Vicenzo Souza Dias"          ,id:"307707f3-2cfa-44b1-b90f-a9916b5b80d1", email:"vicenzo.dias@nextfit.com.br" },
   { team:"Ghosters"   ,name:"Washington Pereira"          ,id:"d9030177-a4ee-40f6-83da-0fb45eb1b49c", email:"washington.pereira@nextfit.com.br" },
 
-  // ── Furia ─────────────────────────────────────────────────────────────────────
+  // ── Furia ───────────────────────────────────────────────────────────────────
   { team:"Furia"      ,name:"Alessandro Tramontin Frigo"  ,id:"6a053407-0a0e-4e3f-a627-d5afb5dcc124", email:"alessandro.frigo@nextfit.com.br" },
   { team:"Furia"      ,name:"Augusto Zanette Vitali"      ,id:"57820fce-cb8c-48f3-973c-796ba072ef3c", email:"augusto.zanette@nextfit.com.br" },
   { team:"Furia"      ,name:"Camily Zanette Albano"       ,id:"519b1cc1-4980-4820-b707-83860085a35e", email:"camily.zanette@nextfit.com.br" },
@@ -46,7 +49,7 @@ const AGENTS = [
   { team:"Furia"      ,name:"Pedro De Farias Alexandre"   ,id:"1c6ab29c-c45f-4bd3-8eb1-c998a8986cff", email:"pedro.alexandre@nextfit.com.br" },
   { team:"Furia"      ,name:"Weslley Domingos"            ,id:"5f96d490-7da2-4c34-8164-e8e3eab03484", email:"weslley.domingos@nextfit.com.br" },
 
-  // ── Onboarding ────────────────────────────────────────────────────────────────
+  // ── Onboarding ──────────────────────────────────────────────────────────────
   { team:"Onboarding" ,name:"Gabriel Dutra"               ,id:"a777b953-37a7-4f24-8fe0-931a03ea9128", email:"gabriel.dutra@nextfit.com.br" },
   { team:"Onboarding" ,name:"Gabriel Silva"               ,id:"358a0c40-92ef-4356-8ab0-cf115d25074c", email:"gabriel.silva@nextfit.com.br" },
   { team:"Onboarding" ,name:"Gabriel Vieira"              ,id:"fc104b8a-f8ec-4332-9af2-325bf761b5c2", email:"gabriel.vieira@nextfit.com.br" },
@@ -60,8 +63,8 @@ const ALLOWED_IDS = new Set(AGENTS.map(a => a.id));
 
 // ─── Rate limiting simples em memória ────────────────────────────────────────
 const rateLimitMap = new Map();
-const RATE_WINDOW_MS = 60_000; // 1 minuto
-const RATE_MAX       = 10;     // máx 10 chamadas por IP por minuto
+const RATE_WINDOW_MS = 60_000;
+const RATE_MAX       = 10;
 
 function isRateLimited(ip) {
   const now = Date.now();
@@ -87,13 +90,11 @@ function requireSecret(req, res, next) {
 
 // ─── Rotas ───────────────────────────────────────────────────────────────────
 
-// Lista de agentes — o front não tem mais nada hardcoded
 app.get("/agents", requireSecret, (req, res) => {
   if (isRateLimited(req.ip)) return res.status(429).json({ error: "Muitas requisições." });
   res.json(AGENTS.map(({ id, name, team, email }) => ({ id, name, team, email })));
 });
 
-// Executa os PATCHs
 app.post("/set-available", requireSecret, async (req, res) => {
   if (isRateLimited(req.ip)) return res.status(429).json({ error: "Muitas requisições." });
 
@@ -103,7 +104,6 @@ app.post("/set-available", requireSecret, async (req, res) => {
     return res.status(400).json({ error: "agent_ids deve ser um array não vazio." });
   }
 
-  // Rejeita IDs que não estejam na lista autorizada
   const invalid = agent_ids.filter(id => !ALLOWED_IDS.has(id));
   if (invalid.length > 0) {
     return res.status(400).json({ error: "IDs não autorizados.", ids: invalid });
@@ -111,17 +111,36 @@ app.post("/set-available", requireSecret, async (req, res) => {
 
   const results = await Promise.all(
     agent_ids.map(async (id) => {
-      const url = `https://${DOMAIN}.freshchat.com/v2/agents/${id}`;
+      const baseUrl = `https://${DOMAIN}.freshchat.com/v2/agents/${id}`;
+      const headers = {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${API_KEY}`,
+      };
+
       try {
-        const response = await fetch(url, {
+        // 1. Checa status atual do agente
+        const getRes = await fetch(baseUrl, { headers });
+        if (getRes.ok) {
+          const agentData = await getRes.json();
+          const currentStatusId = agentData?.agent_status?.id;
+          if (currentStatusId === COFFEE_STATUS_ID) {
+            return { agent_id: id, status: "coffee" };
+          }
+        }
+
+        // 2. Não está no café — seta como disponível
+        const patchRes = await fetch(baseUrl, {
           method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${API_KEY}`,
-          },
+          headers,
           body: JSON.stringify({ availability_status: "AVAILABLE" }),
         });
-        return { agent_id: id, status: response.ok ? "ok" : response.status === 409 ? "offline" : "error", http_status: response.status };
+
+        return {
+          agent_id: id,
+          status: patchRes.ok ? "ok" : patchRes.status === 409 ? "offline" : "error",
+          http_status: patchRes.status,
+        };
+
       } catch (err) {
         return { agent_id: id, status: "network_error", message: err.message };
       }
@@ -133,11 +152,3 @@ app.post("/set-available", requireSecret, async (req, res) => {
 
 // Health check público
 app.get("/health", (_req, res) => res.json({ ok: true }));
-
-const PORT = process.env.PORT || 3001;
-app.listen(PORT, () => {
-  console.log(`✅ Servidor rodando em http://localhost:${PORT}`);
-  console.log(`   Domínio Freshchat : ${DOMAIN}.freshchat.com`);
-  console.log(`   Frontend permitido: ${FRONTEND_URL}`);
-  console.log(`   APP_SECRET        : ${APP_SECRET === "troque-essa-senha-antes-de-subir" ? "⚠️  PADRÃO — troque antes de subir!" : "✓ configurado"}`);
-});

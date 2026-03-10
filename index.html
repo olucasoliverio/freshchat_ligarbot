@@ -179,6 +179,7 @@
     .result-ok      { color: #16a34a; }
     .result-error   { color: #dc2626; }
     .result-offline { color: #f59e0b; font-size: 11px; }
+    .result-coffee  { color: #f59e0b; font-size: 13px; }
 
     /* ── Bottom bar ── */
     .bottom-bar {
@@ -214,6 +215,7 @@
     .log-ok      { color: #4ade80; font-weight: 700; }
     .log-err     { color: #f87171; font-weight: 700; }
     .log-offline { color: #fbbf24; font-weight: 700; }
+    .log-coffee  { color: #fb923c; font-weight: 700; }
     .log-name    { color: #e2e8f0; }
     .log-status  { color: #64748b; }
     .log-divider { border-top: 1px solid #1e293b; margin-top: 12px; padding-top: 10px; color: #475569; font-size: 12px; }
@@ -248,7 +250,7 @@
   <div id="main-panel" style="display:none">
     <div id="teams-container"><div class="loading">Carregando agentes…</div></div>
     <div class="log-panel" id="log-panel">
-      <div class="log-title">LOG DE EXECUCAO</div>
+      <div class="log-title">LOG DE EXECUÇÃO</div>
       <div id="log-lines"></div>
     </div>
   </div>
@@ -264,7 +266,6 @@
 
 <script>
   // ── Config ──────────────────────────────────────────────────────────────────
-  // Troque pela URL do seu backend ao hospedar
   const BACKEND = "https://freshchat-ligarbot.onrender.com";
 
   // ── Estado ──────────────────────────────────────────────────────────────────
@@ -417,44 +418,63 @@
       });
 
       const data = await res.json();
+
       if (!res.ok || !Array.isArray(data.results)) {
         throw new Error(data.error || `Erro HTTP ${res.status}`);
       }
+
       const resultMap = {};
       data.results.forEach(r => { resultMap[r.agent_id] = r; });
 
+      let okCount     = 0;
+      let coffeeCount = 0;
+      let errCount    = 0;
+
       targets.forEach(agent => {
         const r = resultMap[agent.id] || { status: "no_response" };
-        const ok = r.status === "ok";
-
         const cell = document.getElementById(`res-${agent.id}`);
-        if (cell) {
-          if (ok) {
-            cell.innerHTML = `<span class="result-ok">OK</span>`;
-          } else if (r.status === "offline") {
-            cell.innerHTML = `<span class="result-offline">offline</span>`;
-          } else {
-            cell.innerHTML = `<span class="result-error">erro ${r.http_status || r.status}</span>`;
-          }
+
+        if (r.status === "ok") {
+          okCount++;
+          if (cell) cell.innerHTML = `<span class="result-ok">✓ OK</span>`;
+        } else if (r.status === "coffee") {
+          coffeeCount++;
+          if (cell) cell.innerHTML = `<span class="result-coffee">☕ café</span>`;
+        } else if (r.status === "offline") {
+          errCount++;
+          if (cell) cell.innerHTML = `<span class="result-offline">offline</span>`;
+        } else {
+          errCount++;
+          if (cell) cell.innerHTML = `<span class="result-error">erro ${r.http_status || r.status}</span>`;
         }
 
         const ts = new Date().toLocaleTimeString("pt-BR");
         const line = document.createElement("div");
         line.className = "log-line";
+
+        let statusClass, statusLabel, statusMsg;
+        if (r.status === "ok") {
+          statusClass = "log-ok";    statusLabel = "OK";   statusMsg = "DISPONÍVEL";
+        } else if (r.status === "coffee") {
+          statusClass = "log-coffee"; statusLabel = "CAFÉ"; statusMsg = "agente em pausa para café";
+        } else if (r.status === "offline") {
+          statusClass = "log-offline"; statusLabel = "OFF"; statusMsg = "agente offline";
+        } else {
+          statusClass = "log-err"; statusLabel = "ERRO"; statusMsg = r.http_status || r.status;
+        }
+
         line.innerHTML = `
           <span class="log-time">[${ts}]</span>
-          <span class="${ok ? "log-ok" : r.status === "offline" ? "log-offline" : "log-err"}">${ok ? "OK" : r.status === "offline" ? "OFF" : "ERRO"}</span>
+          <span class="${statusClass}">${statusLabel}</span>
           <span class="log-name">${agent.name}</span>
-          <span class="log-status">— ${ok ? "DISPONÍVEL" : r.status === "offline" ? "agente offline" : (r.http_status || r.status)}</span>
+          <span class="log-status">— ${statusMsg}</span>
         `;
         logLines.appendChild(line);
       });
 
-      const okCount  = data.results.filter(r => r.status === "ok").length;
-      const errCount = data.results.length - okCount;
       const div = document.createElement("div");
       div.className = "log-divider";
-      div.textContent = `Concluído — ${okCount} sucesso, ${errCount} erro${errCount !== 1 ? "s" : ""}`;
+      div.textContent = `Concluído — ${okCount} sucesso, ${coffeeCount} em café, ${errCount} erro${errCount !== 1 ? "s" : ""}`;
       logLines.appendChild(div);
 
     } catch (e) {

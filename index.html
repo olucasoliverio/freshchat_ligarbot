@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Freshchat Availability</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap');
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #f1f5f9;
+      --surface: #ffffff;
+      --border: #e2e8f0;
+      --text: #0f172a;
+      --muted: #64748b;
+      --ghosters: #6366f1;
+      --ghosters-bg: #eef2ff;
+      --ghosters-border: #c7d2fe;
+      --furia: #f43f5e;
+      --furia-bg: #fff1f2;
+      --furia-border: #fecdd3;
+      --green: #22c55e;
+      --dark: #0f172a;
+      --radius: 12px;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 32px 20px 80px;
+    }
+
+    .wrapper { max-width: 1100px; margin: 0 auto; }
+
+    /* ── Header ── */
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 28px;
+    }
+    .header-icon {
+      width: 46px; height: 46px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #6366f1, #8b5cf6);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px; flex-shrink: 0;
+    }
+    .header h1 { font-size: 22px; font-weight: 700; }
+    .header p  { font-size: 13px; color: var(--muted); margin-top: 2px; }
+
+    /* ── Login ── */
+    .login-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 32px;
+      max-width: 420px;
+      margin: 60px auto 0;
+      box-shadow: 0 1px 4px rgba(0,0,0,.06);
+    }
+    .login-card h2 { font-size: 17px; font-weight: 700; margin-bottom: 6px; }
+    .login-card p  { font-size: 13px; color: var(--muted); margin-bottom: 20px; }
+    .login-card input {
+      width: 100%; border: 1.5px solid var(--border);
+      border-radius: 8px; padding: 10px 14px;
+      font-size: 14px; font-family: inherit; color: var(--text);
+      margin-bottom: 12px; outline: none;
+      transition: border .15s, box-shadow .15s;
+    }
+    .login-card input:focus { border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99,102,241,.15); }
+    .login-btn {
+      width: 100%; background: linear-gradient(135deg, #6366f1, #8b5cf6);
+      color: #fff; border: none; border-radius: 8px;
+      padding: 11px; font-size: 14px; font-weight: 700;
+      cursor: pointer; font-family: inherit;
+      transition: opacity .2s;
+    }
+    .login-btn:hover { opacity: .9; }
+    .login-error { font-size: 12px; color: #dc2626; margin-top: 8px; display: none; }
+
+    /* ── Teams grid ── */
+    #teams-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      align-items: start;
+    }
+    @media (max-width: 700px) { #teams-container { grid-template-columns: 1fr; } }
+
+    /* ── Card ── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: 0 1px 4px rgba(0,0,0,.05);
+      overflow: hidden;
+    }
+
+    /* ── Team header ── */
+    .team-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 15px 20px;
+      border-bottom: 1px solid var(--border);
+    }
+    .team-header.ghosters { background: var(--ghosters-bg); border-color: var(--ghosters-border); }
+    .team-header.furia    { background: var(--furia-bg);    border-color: var(--furia-border); }
+
+    .team-badge {
+      color: #fff; padding: 3px 11px; border-radius: 20px;
+      font-size: 11px; font-weight: 700; letter-spacing: .6px;
+    }
+    .badge-ghosters { background: var(--ghosters); }
+    .badge-furia    { background: var(--furia); }
+
+    .team-count { font-size: 13px; color: var(--muted); margin-left: 10px; }
+
+    .team-toggle-wrap {
+      display: flex; align-items: center; gap: 8px;
+      cursor: pointer; user-select: none;
+    }
+    .team-toggle-label { font-size: 12px; color: var(--muted); font-weight: 500; }
+
+    /* ── Toggle ── */
+    .toggle {
+      position: relative; width: 42px; height: 24px;
+      border-radius: 24px; background: #d1d5db;
+      cursor: pointer; transition: background .2s; flex-shrink: 0;
+    }
+    .toggle.on { background: var(--green); }
+    .toggle.lg { width: 52px; height: 28px; }
+    .toggle::after {
+      content: ''; position: absolute;
+      top: 3px; left: 3px; width: 18px; height: 18px;
+      border-radius: 50%; background: #fff;
+      box-shadow: 0 1px 3px rgba(0,0,0,.2); transition: left .2s;
+    }
+    .toggle.lg::after { width: 22px; height: 22px; }
+    .toggle.on::after { left: calc(100% - 21px); }
+    .toggle.lg.on::after { left: calc(100% - 25px); }
+
+    /* ── Agent row ── */
+    .agent-row {
+      display: flex; align-items: center; gap: 14px;
+      padding: 11px 20px; border-bottom: 1px solid #f1f5f9;
+      cursor: pointer; transition: background .1s;
+    }
+    .agent-row:last-child { border-bottom: none; }
+    .agent-row:hover { background: #f8fafc; }
+
+    .avatar {
+      width: 34px; height: 34px; border-radius: 50%;
+      background: #e2e8f0; display: flex; align-items: center;
+      justify-content: center; font-size: 11px; font-weight: 700;
+      color: #94a3b8; flex-shrink: 0; transition: background .2s, color .2s;
+    }
+    .avatar.on.ghosters { background: var(--ghosters); color: #fff; }
+    .avatar.on.furia    { background: var(--furia); color: #fff; }
+
+    .agent-info { flex: 1; min-width: 0; }
+    .agent-name  { font-weight: 600; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .agent-email { font-size: 12px; color: #94a3b8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    .result-cell { min-width: 60px; text-align: right; font-size: 13px; font-weight: 600; }
+    .result-ok    { color: #16a34a; }
+    .result-error { color: #dc2626; }
+
+    /* ── Bottom bar ── */
+    .bottom-bar {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      background: #0f172a; border-top: 1px solid #1e293b;
+      padding: 14px 32px;
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 16px; z-index: 100;
+    }
+    .bar-info h3 { color: #fff; font-size: 15px; font-weight: 700; }
+    .bar-info p  { color: #94a3b8; font-size: 12px; margin-top: 2px; }
+
+    .run-btn {
+      background: linear-gradient(135deg, #22c55e, #16a34a);
+      color: #fff; border: none; border-radius: 10px;
+      padding: 12px 28px; font-size: 14px; font-weight: 700;
+      cursor: pointer; white-space: nowrap; font-family: inherit;
+      transition: opacity .2s, transform .1s;
+    }
+    .run-btn:hover:not(:disabled) { opacity: .9; transform: translateY(-1px); }
+    .run-btn:disabled { background: #374151; color: #6b7280; cursor: not-allowed; }
+
+    /* ── Log ── */
+    .log-panel {
+      background: #0f172a; border-radius: var(--radius);
+      padding: 20px 24px; width: 100%; margin-top: 20px;
+      font-family: 'Menlo', 'Consolas', monospace; display: none;
+    }
+    .log-panel.visible { display: block; }
+    .log-title   { color: #94a3b8; font-size: 11px; font-weight: 700; letter-spacing: 1px; margin-bottom: 12px; }
+    .log-line    { font-size: 12.5px; margin-bottom: 4px; display: flex; gap: 10px; }
+    .log-time    { color: #475569; }
+    .log-ok      { color: #4ade80; font-weight: 700; }
+    .log-err     { color: #f87171; font-weight: 700; }
+    .log-name    { color: #e2e8f0; }
+    .log-status  { color: #64748b; }
+    .log-divider { border-top: 1px solid #1e293b; margin-top: 12px; padding-top: 10px; color: #475569; font-size: 12px; }
+
+    /* ── Loading ── */
+    .loading { text-align: center; padding: 60px 20px; color: var(--muted); font-size: 14px; }
+  </style>
+</head>
+<body>
+
+<div class="wrapper">
+  <div class="header">
+    <div class="header-icon">💬</div>
+    <div>
+      <h1>Freshchat Disponibilidade dos Agentes</h1>
+      <p>Defina agentes como <strong>DISPONÍVEIS</strong> em lote</p>
+    </div>
+  </div>
+
+  <!-- Tela de login -->
+  <div id="login-screen">
+    <div class="login-card">
+      <h2>Acesso restrito</h2>
+      <p>Insira a senha para acessar o painel.</p>
+      <input type="password" id="secret-input" placeholder="Senha de acesso" />
+      <button class="login-btn" onclick="doLogin()">Entrar</button>
+      <div class="login-error" id="login-error">Senha incorreta ou backend fora do ar.</div>
+    </div>
+  </div>
+
+  <!-- Painel principal (oculto até login) -->
+  <div id="main-panel" style="display:none">
+    <div id="teams-container"><div class="loading">Carregando agentes…</div></div>
+    <div class="log-panel" id="log-panel">
+      <div class="log-title">LOG DE EXECUÇÃO</div>
+      <div id="log-lines"></div>
+    </div>
+  </div>
+</div>
+
+<div class="bottom-bar" id="bottom-bar" style="display:none">
+  <div class="bar-info">
+    <h3 id="bar-count">0 agentes selecionados</h3>
+  </div>
+  <button class="run-btn" id="run-btn" disabled onclick="runAll()">▶ Executar</button>
+</div>
+
+<script>
+  // ── Config ──────────────────────────────────────────────────────────────────
+  const BACKEND = "HOSPEDAR_BACKEND_AQUI"; 
+
+  // ── Estado ──────────────────────────────────────────────────────────────────
+  let AGENTS = [];
+  let appSecret = "";
+  const selected = {};
+
+  // ── Helpers ─────────────────────────────────────────────────────────────────
+  const initials = (n) => n.split(" ").slice(0,2).map(w => w[0]).join("").toUpperCase();
+
+  function authHeaders() {
+    return { "Content-Type": "application/json", "x-app-secret": appSecret };
+  }
+
+  // ── Login ────────────────────────────────────────────────────────────────────
+  document.getElementById("secret-input").addEventListener("keydown", e => {
+    if (e.key === "Enter") doLogin();
+  });
+
+  async function doLogin() {
+    const input = document.getElementById("secret-input");
+    const err   = document.getElementById("login-error");
+    appSecret = input.value.trim();
+    err.style.display = "none";
+
+    try {
+      const res = await fetch(`${BACKEND}/agents`, { headers: authHeaders() });
+      if (!res.ok) throw new Error("unauthorized");
+      AGENTS = await res.json();
+      document.getElementById("login-screen").style.display = "none";
+      document.getElementById("main-panel").style.display = "block";
+      document.getElementById("bottom-bar").style.display = "flex";
+      buildUI();
+    } catch {
+      err.style.display = "block";
+      appSecret = "";
+    }
+  }
+
+  // ── UI ───────────────────────────────────────────────────────────────────────
+  function buildUI() {
+    const teams = [...new Set(AGENTS.map(a => a.team))];
+    const container = document.getElementById("teams-container");
+    container.innerHTML = "";
+
+    teams.forEach(team => {
+      const teamAgents = AGENTS
+        .filter(a => a.team === team)
+        .sort((a, b) => a.name.localeCompare(b.name, "pt-BR"));
+      const slug = team.toLowerCase();
+
+      teamAgents.forEach(a => { selected[a.id] = false; });
+
+      const card = document.createElement("div");
+      card.className = "card";
+
+      const th = document.createElement("div");
+      th.className = `team-header ${slug}`;
+      th.innerHTML = `
+        <div style="display:flex;align-items:center;gap:10px">
+          <span class="team-badge badge-${slug}">${team.toUpperCase()}</span>
+          <span class="team-count" id="count-${slug}">0/${teamAgents.length} selecionados</span>
+        </div>
+        <div class="team-toggle-wrap" onclick="toggleTeam('${team}')">
+          <span class="team-toggle-label" id="team-label-${slug}">Marcar todos</span>
+          <div class="toggle lg" id="team-toggle-${slug}"></div>
+        </div>
+      `;
+      card.appendChild(th);
+
+      teamAgents.forEach(agent => {
+        const row = document.createElement("div");
+        row.className = "agent-row";
+        row.onclick = () => toggleAgent(agent.id, team);
+        row.innerHTML = `
+          <div class="avatar" id="av-${agent.id}">${initials(agent.name)}</div>
+          <div class="agent-info">
+            <div class="agent-name">${agent.name}</div>
+            <div class="agent-email">${agent.email}</div>
+          </div>
+          <div class="result-cell" id="res-${agent.id}"></div>
+          <div class="toggle" id="tg-${agent.id}"></div>
+        `;
+        card.appendChild(row);
+      });
+
+      container.appendChild(card);
+    });
+  }
+
+  function refreshAgent(id, team) {
+    const on = selected[id];
+    const slug = team.toLowerCase();
+    document.getElementById(`tg-${id}`)?.classList.toggle("on", on);
+    const av = document.getElementById(`av-${id}`);
+    if (av) av.className = `avatar${on ? ` on ${slug}` : ""}`;
+    refreshTeam(team);
+    refreshBar();
+  }
+
+  function refreshTeam(team) {
+    const slug = team.toLowerCase();
+    const agents = AGENTS.filter(a => a.team === team);
+    const onCount = agents.filter(a => selected[a.id]).length;
+    const allOn = onCount === agents.length;
+    document.getElementById(`count-${slug}`).textContent = `${onCount}/${agents.length} selecionados`;
+    document.getElementById(`team-toggle-${slug}`)?.classList.toggle("on", allOn);
+    document.getElementById(`team-label-${slug}`).textContent = allOn ? "Desmarcar todos" : "Marcar todos";
+  }
+
+  function refreshBar() {
+    const count = Object.values(selected).filter(Boolean).length;
+    document.getElementById("bar-count").textContent =
+      `${count} agente${count !== 1 ? "s" : ""} selecionado${count !== 1 ? "s" : ""}`;
+    const btn = document.getElementById("run-btn");
+    btn.disabled = count === 0;
+    btn.textContent = `▶ Executar (${count})`;
+  }
+
+  function toggleAgent(id, team) {
+    selected[id] = !selected[id];
+    refreshAgent(id, team);
+  }
+
+  function toggleTeam(team) {
+    const agents = AGENTS.filter(a => a.team === team);
+    const allOn = agents.every(a => selected[a.id]);
+    agents.forEach(a => { selected[a.id] = !allOn; refreshAgent(a.id, team); });
+  }
+
+  // ── Execução ─────────────────────────────────────────────────────────────────
+  async function runAll() {
+    const targets = AGENTS.filter(a => selected[a.id]);
+    if (!targets.length) return;
+
+    const btn = document.getElementById("run-btn");
+    btn.disabled = true;
+    btn.textContent = "⏳ Executando...";
+
+    const logPanel = document.getElementById("log-panel");
+    const logLines = document.getElementById("log-lines");
+    logPanel.classList.add("visible");
+    logLines.innerHTML = "";
+
+    try {
+      const res = await fetch(`${BACKEND}/set-available`, {
+        method: "POST",
+        headers: authHeaders(),
+        body: JSON.stringify({ agent_ids: targets.map(a => a.id) }),
+      });
+
+      const data = await res.json();
+      const resultMap = {};
+      data.results.forEach(r => { resultMap[r.agent_id] = r; });
+
+      targets.forEach(agent => {
+        const r = resultMap[agent.id] || { status: "no_response" };
+        const ok = r.status === "ok";
+
+        const cell = document.getElementById(`res-${agent.id}`);
+        if (cell) {
+          cell.innerHTML = ok
+            ? `<span class="result-ok">✓</span>`
+            : `<span class="result-error">✗ ${r.http_status || r.status}</span>`;
+        }
+
+        const ts = new Date().toLocaleTimeString("pt-BR");
+        const line = document.createElement("div");
+        line.className = "log-line";
+        line.innerHTML = `
+          <span class="log-time">[${ts}]</span>
+          <span class="${ok ? "log-ok" : "log-err"}">${ok ? "✓" : "✗"}</span>
+          <span class="log-name">${agent.name}</span>
+          <span class="log-status">→ ${ok ? "AVAILABLE" : (r.http_status || r.status)}</span>
+        `;
+        logLines.appendChild(line);
+      });
+
+      const okCount  = data.results.filter(r => r.status === "ok").length;
+      const errCount = data.results.length - okCount;
+      const div = document.createElement("div");
+      div.className = "log-divider";
+      div.textContent = `Concluído — ${okCount} sucesso, ${errCount} erro${errCount !== 1 ? "s" : ""}`;
+      logLines.appendChild(div);
+
+    } catch (e) {
+      const line = document.createElement("div");
+      line.className = "log-line";
+      line.innerHTML = `<span class="log-err">✗ Erro ao conectar no backend: ${e.message}</span>`;
+      logLines.appendChild(line);
+    }
+
+    btn.textContent = "▶ Executar";
+    refreshBar();
+  }
+</script>
+</body>
+</html>

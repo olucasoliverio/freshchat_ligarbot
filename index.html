@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Freshchat Distribuição</title>
+  <title>Freshchat Disponibilidade</title>
   <link rel="icon" type="image/svg+xml" href="favicon.svg"/>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap');
@@ -22,6 +22,9 @@
       --furia: #f43f5e;
       --furia-bg: #fff1f2;
       --furia-border: #fecdd3;
+      --onboarding: #0ea5e9;
+      --onboarding-bg: #f0f9ff;
+      --onboarding-border: #bae6fd;
       --green: #22c55e;
       --dark: #0f172a;
       --radius: 12px;
@@ -87,11 +90,12 @@
     /* ── Teams grid ── */
     #teams-container {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: repeat(3, 1fr);
       gap: 20px;
       align-items: start;
     }
-    @media (max-width: 700px) { #teams-container { grid-template-columns: 1fr; } }
+    @media (max-width: 1000px) { #teams-container { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 600px)  { #teams-container { grid-template-columns: 1fr; } }
 
     /* ── Card ── */
     .card {
@@ -110,15 +114,17 @@
       padding: 15px 20px;
       border-bottom: 1px solid var(--border);
     }
-    .team-header.ghosters { background: var(--ghosters-bg); border-color: var(--ghosters-border); }
-    .team-header.furia    { background: var(--furia-bg);    border-color: var(--furia-border); }
+    .team-header.ghosters   { background: var(--ghosters-bg);   border-color: var(--ghosters-border); }
+    .team-header.furia      { background: var(--furia-bg);      border-color: var(--furia-border); }
+    .team-header.onboarding { background: var(--onboarding-bg); border-color: var(--onboarding-border); }
 
     .team-badge {
       color: #fff; padding: 3px 11px; border-radius: 20px;
       font-size: 11px; font-weight: 700; letter-spacing: .6px;
     }
-    .badge-ghosters { background: var(--ghosters); }
-    .badge-furia    { background: var(--furia); }
+    .badge-ghosters   { background: var(--ghosters); }
+    .badge-furia      { background: var(--furia); }
+    .badge-onboarding { background: var(--onboarding); }
 
     .team-count { font-size: 13px; color: var(--muted); margin-left: 10px; }
 
@@ -161,8 +167,9 @@
       justify-content: center; font-size: 11px; font-weight: 700;
       color: #94a3b8; flex-shrink: 0; transition: background .2s, color .2s;
     }
-    .avatar.on.ghosters { background: var(--ghosters); color: #fff; }
-    .avatar.on.furia    { background: var(--furia); color: #fff; }
+    .avatar.on.ghosters   { background: var(--ghosters);   color: #fff; }
+    .avatar.on.furia      { background: var(--furia);      color: #fff; }
+    .avatar.on.onboarding { background: var(--onboarding); color: #fff; }
 
     .agent-info { flex: 1; min-width: 0; }
     .agent-name  { font-weight: 600; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -219,7 +226,7 @@
 
 <div class="wrapper">
   <div class="header">
-    <div class="header-icon">🧙‍♂️</div>
+    <div class="header-icon"></div>
     <div>
       <h1>Freshchat Disponibilidade de Agentes</h1>
       <p>Defina agentes como <strong>DISPONÍVEL</strong> em lote</p>

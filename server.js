@@ -49,6 +49,19 @@ const AGENTS = [
   { team:"Furia"      ,name:"Pedro De Farias Alexandre"   ,id:"1c6ab29c-c45f-4bd3-8eb1-c998a8986cff", email:"pedro.alexandre@nextfit.com.br" },
   { team:"Furia"      ,name:"Weslley Domingos"            ,id:"5f96d490-7da2-4c34-8164-e8e3eab03484", email:"weslley.domingos@nextfit.com.br" },
 
+  // ── Equipamentos ────────────────────────────────────────────────────────────
+  { team:"Equipamentos" ,name:"Arthur Rabello"              ,id:"f91bf427-38c5-4b61-bf4c-0f60850548b0", email:"arthur.rabello@nextfit.com.br" },
+  { team:"Equipamentos" ,name:"Eduardo Santana"             ,id:"3c80faf5-5913-455d-be8a-6ba4f5212145", email:"eduardo.santana@nextfit.com.br" },
+  { team:"Equipamentos" ,name:"Filipe Vonsnievski"          ,id:"a9cec6ff-2999-4878-b50c-dc7d2d747043", email:"filipe.vonsnievski@nextfit.com.br" },
+  { team:"Equipamentos" ,name:"Gabriel Adão"                ,id:"3745a936-f1e2-43ad-bd7f-502a8c767ca7", email:"gabriel.adao@nextfit.com.br" },
+  { team:"Equipamentos" ,name:"Gabriel Caetano"             ,id:"88cf1d19-33b8-4e03-8647-df3ff7f7de0e", email:"gabriel.caetano@nextfit.com.br" },
+  { team:"Equipamentos" ,name:"Luan Limas"                  ,id:"203ec215-c157-4293-9c20-4cef6915f71c", email:"luan.limas@nextfit.com.br" },
+  { team:"Equipamentos" ,name:"Pedro Henrique Honorato"     ,id:"93c4c71e-900a-414f-b005-b16d4a83bc22", email:"pedro.honorato@nextfit.com.br" },
+  { team:"Equipamentos" ,name:"Rafael Bauer"                ,id:"8adfd0ef-63cf-4c05-b82b-e5ae9354a8ee", email:"rafael.bauer@nextfit.com.br" },
+  { team:"Equipamentos" ,name:"Roniel Serafim"              ,id:"93dfd3fc-6b49-4d2f-a4d7-2774083fe41d", email:"roniel.serafim@nextfit.com.br" },
+  { team:"Equipamentos" ,name:"Saymon Espindola"            ,id:"b8cddd8d-5444-4871-9891-3ed0ca0e607e", email:"saymon.espindola@nextfit.com.br" },
+  { team:"Equipamentos" ,name:"Vitor Ribeiro"               ,id:"0ce4d422-a417-4ce4-924c-b3e5db6fab6f", email:"vitor.ribeiro@nextfit.com.br" },
+
   // ── Onboarding ──────────────────────────────────────────────────────────────
   { team:"Onboarding" ,name:"Gabriel Dutra"               ,id:"a777b953-37a7-4f24-8fe0-931a03ea9128", email:"gabriel.dutra@nextfit.com.br" },
   { team:"Onboarding" ,name:"Gabriel Silva"               ,id:"358a0c40-92ef-4356-8ab0-cf115d25074c", email:"gabriel.silva@nextfit.com.br" },

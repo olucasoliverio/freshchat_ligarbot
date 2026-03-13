@@ -16,6 +16,7 @@ const FRONTEND_URL = process.env.FRONTEND_URL;
 app.use(cors({
   origin: FRONTEND_URL,
   methods: ["GET", "POST"],
+  allowedHeaders: ["Content-Type", "X-App-Secret"],
 }));
 
 // ─── Status especiais ────────────────────────────────────────────────────────

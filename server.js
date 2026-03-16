@@ -1,6 +1,9 @@
 import express from "express";
 import cors from "cors";
 import fetch from "node-fetch";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const app = express();
 app.use(express.json());
@@ -80,6 +83,13 @@ const rateLimitMap = new Map();
 const RATE_WINDOW_MS = 60_000;
 const RATE_MAX       = 10;
 
+const AGENTS_STATUS_CACHE_TTL_MS = 2 * 60 * 1000;
+
+let agentsStatusCache = {
+  data: null,
+  expiresAt: 0,
+};
+
 function isRateLimited(ip) {
   const now = Date.now();
   const entry = rateLimitMap.get(ip) || { count: 0, start: now };
@@ -109,6 +119,56 @@ app.get("/agents", requireSecret, (req, res) => {
   res.json(AGENTS.map(({ id, name, team, email }) => ({ id, name, team, email })));
 });
 
+app.get("/agents-status", async (req, res) => {
+  if (isRateLimited(req.ip)) return res.status(429).json({ error: "Muitas requisições." });
+  const now = Date.now();
+
+  if (agentsStatusCache.data && now < agentsStatusCache.expiresAt) {
+    return res.json({
+      source: "cache",
+      cached_until: agentsStatusCache.expiresAt,
+      results: agentsStatusCache.data,
+    });
+  }
+  const results = await Promise.all(
+    AGENTS.map(async ({ id, name, team, email, }) => {
+      const baseUrl = `https://${DOMAIN}.freshchat.com/v2/agents/${id}`;
+      const headers = {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${API_KEY}`,
+      };
+
+      try {
+        const getRes = await fetch(baseUrl, { headers });
+        if (!getRes.ok) return { id, name, team, email, availability_status: "UNKNOWN", error: `GET falhou: ${getRes.status}`, error_message:await getRes.text() };
+
+        const data = await getRes.json();
+        return {
+          id,
+          name,
+          team,
+          email,
+          availability_status: data.availability_status ?? "UNKNOWN",
+          agent_status_id: data.agent_status?.name ?? null,
+        };
+      } catch {
+        return { id, name, team, email, availability_status: "UNKNOWN" };
+      }
+    })
+  );
+agentsStatusCache = {
+    data: results,
+    expiresAt: now + AGENTS_STATUS_CACHE_TTL_MS,
+  };
+
+  return res.json({
+    source: "freshchat",
+    cached_until: agentsStatusCache.expiresAt,
+    results,
+  });
+});
+
+//RequireSecret quando finalizar
 app.post("/set-available", requireSecret, async (req, res) => {
   if (isRateLimited(req.ip)) return res.status(429).json({ error: "Muitas requisições." });
 
@@ -163,7 +223,10 @@ app.post("/set-available", requireSecret, async (req, res) => {
       }
     })
   );
-
+  agentsStatusCache = {
+    data: null,
+    expiresAt: 0,
+  };
   return res.json({ results });
 });
 

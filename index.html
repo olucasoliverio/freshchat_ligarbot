@@ -208,6 +208,22 @@
     .run-btn:hover:not(:disabled) { opacity: .9; transform: translateY(-1px); }
     .run-btn:disabled { background: #374151; color: #6b7280; cursor: not-allowed; }
 
+    .sync-button {
+      height: 42px;
+      padding: 0 16px;
+      border: 1px solid #41506b;
+      border-radius: 12px;
+      background: transparent;
+      color: #ffffff;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .sync-button:hover {
+      background: rgba(255, 255, 255, 0.06);
+    }
+
     /* ── Log ── */
     .log-panel {
       background: #0f172a; border-radius: var(--radius);
@@ -268,11 +284,14 @@
     <p>PATCH → availability_status: DISPONÍVEL</p>
   </div>
   <button class="run-btn" id="run-btn" disabled onclick="runAll()">Executar</button>
+  <button id="btn-sync" class="sync-button" onclick="syncAgentStatus()">🔄 Sincronizar Status</button>
+
 </div>
 
 <script>
   // ── Config ──────────────────────────────────────────────────────────────────
   const BACKEND = "https://freshchat-ligarbot.onrender.com";
+  const BACKEND_LOCAL = "http://localhost:3001";
 
   // ── Estado ──────────────────────────────────────────────────────────────────
   let AGENTS = [];
@@ -403,6 +422,19 @@
   }
 
   // ── Execução ─────────────────────────────────────────────────────────────────
+  async function syncAgentStatus() {
+  const res = await fetch(`${BACKEND}/agents-status`);
+  const { results } = await res.json();
+
+  results.forEach(agent => {
+     const toggle = document.getElementById(`tg-${agent.id}`);
+    if (toggle) {
+      toggle.classList.toggle("on", agent.availability_status === "AVAILABLE");
+    }
+  });
+}
+
+
   async function runAll() {
     const targets = AGENTS.filter(a => selected[a.id]);
     if (!targets.length) return;

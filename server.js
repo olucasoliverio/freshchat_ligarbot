@@ -27,6 +27,17 @@ const COFFEE_STATUS_ID = "4d37887b-e220-4533-9e69-a024dd81cfdb";
 
 // ─── Agentes ─────────────────────────────────────────────────────────────────
 const AGENTS = [
+  // ── Furia ───────────────────────────────────────────────────────────────────
+  { team: "Furia", name: "Alessandro Tramontin Frigo", id: "6a053407-0a0e-4e3f-a627-d5afb5dcc124", email: "alessandro.frigo@nextfit.com.br" },
+  { team: "Furia", name: "Augusto Zanette Vitali", id: "57820fce-cb8c-48f3-973c-796ba072ef3c", email: "augusto.zanette@nextfit.com.br" },
+  { team: "Furia", name: "Camily Zanette Albano", id: "519b1cc1-4980-4820-b707-83860085a35e", email: "camily.zanette@nextfit.com.br" },
+  { team: "Furia", name: "Gustavo Belegante", id: "96e8c7ca-f528-40d2-9a69-18386a99a9f6", email: "gustavo.belegante@nextfit.com.br" },
+  { team: "Furia", name: "Kahoan Orben", id: "c6bd2f7d-06b7-4d66-9043-d64539c46854", email: "kahoan.orben@nextfit.com.br" },
+  { team: "Furia", name: "Maria Julia Talamini", id: "a31feb18-f3df-41f3-b4a0-a7d3b04858a5", email: "mariajulia.talamini@nextfit.com.br" },
+  { team: "Furia", name: "Mauricio Soares de Lima", id: "011450ed-dc6d-41cd-ad08-1af4cfa6be83", email: "mauricio.lima@nextfit.com.br" },
+  { team: "Furia", name: "Pedro De Farias Alexandre", id: "1c6ab29c-c45f-4bd3-8eb1-c998a8986cff", email: "pedro.alexandre@nextfit.com.br" },
+  { team: "Furia", name: "Weslley Domingos", id: "5f96d490-7da2-4c34-8164-e8e3eab03484", email: "weslley.domingos@nextfit.com.br" },
+
   // ── Ghosters ────────────────────────────────────────────────────────────────
   { team: "Ghosters", name: "Caetano Córdova da Silva", id: "f37470fa-3467-43a2-8ee1-461bfe86eb38", email: "caetano.cordova@nextfit.com.br" },
   { team: "Ghosters", name: "Camilli Salvaro", id: "c1848870-d518-48a1-ba42-aff26f23c3ba", email: "camilli.salvaro@nextfit.com.br" },
@@ -40,16 +51,14 @@ const AGENTS = [
   { team: "Ghosters", name: "Vicenzo Souza Dias", id: "307707f3-2cfa-44b1-b90f-a9916b5b80d1", email: "vicenzo.dias@nextfit.com.br" },
   { team: "Ghosters", name: "Washington Pereira", id: "d9030177-a4ee-40f6-83da-0fb45eb1b49c", email: "washington.pereira@nextfit.com.br" },
 
-  // ── Furia ───────────────────────────────────────────────────────────────────
-  { team: "Furia", name: "Alessandro Tramontin Frigo", id: "6a053407-0a0e-4e3f-a627-d5afb5dcc124", email: "alessandro.frigo@nextfit.com.br" },
-  { team: "Furia", name: "Augusto Zanette Vitali", id: "57820fce-cb8c-48f3-973c-796ba072ef3c", email: "augusto.zanette@nextfit.com.br" },
-  { team: "Furia", name: "Camily Zanette Albano", id: "519b1cc1-4980-4820-b707-83860085a35e", email: "camily.zanette@nextfit.com.br" },
-  { team: "Furia", name: "Gustavo Belegante", id: "96e8c7ca-f528-40d2-9a69-18386a99a9f6", email: "gustavo.belegante@nextfit.com.br" },
-  { team: "Furia", name: "Kahoan Orben", id: "c6bd2f7d-06b7-4d66-9043-d64539c46854", email: "kahoan.orben@nextfit.com.br" },
-  { team: "Furia", name: "Maria Julia Talamini", id: "a31feb18-f3df-41f3-b4a0-a7d3b04858a5", email: "mariajulia.talamini@nextfit.com.br" },
-  { team: "Furia", name: "Mauricio Soares de Lima", id: "011450ed-dc6d-41cd-ad08-1af4cfa6be83", email: "mauricio.lima@nextfit.com.br" },
-  { team: "Furia", name: "Pedro De Farias Alexandre", id: "1c6ab29c-c45f-4bd3-8eb1-c998a8986cff", email: "pedro.alexandre@nextfit.com.br" },
-  { team: "Furia", name: "Weslley Domingos", id: "5f96d490-7da2-4c34-8164-e8e3eab03484", email: "weslley.domingos@nextfit.com.br" },
+  // ── Onboarding ──────────────────────────────────────────────────────────────
+  { team: "Onboarding", name: "Gabriel Dutra", id: "a777b953-37a7-4f24-8fe0-931a03ea9128", email: "gabriel.dutra@nextfit.com.br" },
+  { team: "Onboarding", name: "Gabriel Silva", id: "358a0c40-92ef-4356-8ab0-cf115d25074c", email: "gabriel.silva@nextfit.com.br" },
+  { team: "Onboarding", name: "Gabriel Vieira", id: "fc104b8a-f8ec-4332-9af2-325bf761b5c2", email: "gabriel.vieira@nextfit.com.br" },
+  { team: "Onboarding", name: "Ingridy Morona", id: "ead675d6-711a-4758-9345-d3b078149c8c", email: "ingridy.morona@nextfit.com.br" },
+  { team: "Onboarding", name: "Kauã Frassetto", id: "01da2031-767a-4ca2-9050-d950e95917e0", email: "kaua.frassetto@nextfit.com.br" },
+  { team: "Onboarding", name: "Lorraini Vieira", id: "79751dc3-0bda-4148-afde-5ad5d0c7ed89", email: "lorraini.vieira@nextfit.com.br" },
+  { team: "Onboarding", name: "Luan Cardoso", id: "6c009fe8-fbf9-44e6-9767-dd2e982c4b44", email: "luan.cardoso@nextfit.com.br" },
 
   // ── Equipamentos ────────────────────────────────────────────────────────────
   { team: "Equipamentos", name: "Arthur Rabello", id: "f91bf427-38c5-4b61-bf4c-0f60850548b0", email: "arthur.rabello@nextfit.com.br" },
@@ -63,15 +72,6 @@ const AGENTS = [
   { team: "Equipamentos", name: "Roniel Serafim", id: "93dfd3fc-6b49-4d2f-a4d7-2774083fe41d", email: "roniel.serafim@nextfit.com.br" },
   { team: "Equipamentos", name: "Saymon Espindola", id: "b8cddd8d-5444-4871-9891-3ed0ca0e607e", email: "saymon.espindola@nextfit.com.br" },
   { team: "Equipamentos", name: "Vitor Ribeiro", id: "0ce4d422-a417-4ce4-924c-b3e5db6fab6f", email: "vitor.ribeiro@nextfit.com.br" },
-
-  // ── Onboarding ──────────────────────────────────────────────────────────────
-  { team: "Onboarding", name: "Gabriel Dutra", id: "a777b953-37a7-4f24-8fe0-931a03ea9128", email: "gabriel.dutra@nextfit.com.br" },
-  { team: "Onboarding", name: "Gabriel Silva", id: "358a0c40-92ef-4356-8ab0-cf115d25074c", email: "gabriel.silva@nextfit.com.br" },
-  { team: "Onboarding", name: "Gabriel Vieira", id: "fc104b8a-f8ec-4332-9af2-325bf761b5c2", email: "gabriel.vieira@nextfit.com.br" },
-  { team: "Onboarding", name: "Ingridy Morona", id: "ead675d6-711a-4758-9345-d3b078149c8c", email: "ingridy.morona@nextfit.com.br" },
-  { team: "Onboarding", name: "Kauã Frassetto", id: "01da2031-767a-4ca2-9050-d950e95917e0", email: "kaua.frassetto@nextfit.com.br" },
-  { team: "Onboarding", name: "Lorraini Vieira", id: "79751dc3-0bda-4148-afde-5ad5d0c7ed89", email: "lorraini.vieira@nextfit.com.br" },
-  { team: "Onboarding", name: "Luan Cardoso", id: "6c009fe8-fbf9-44e6-9767-dd2e982c4b44", email: "luan.cardoso@nextfit.com.br" },
 ];
 
 const ALLOWED_IDS = new Set(AGENTS.map(a => a.id));
